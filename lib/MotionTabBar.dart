@@ -9,14 +9,17 @@ import 'helpers/HalfPainter.dart';
 typedef MotionTabBuilder = Widget Function();
 
 class MotionTabBar extends StatefulWidget {
-  final Color? tabIconColor, tabIconSelectedColor, tabSelectedColor, tabBarColor;
+  final Color? tabIconColor,
+      tabIconSelectedColor,
+      tabSelectedColor,
+      tabBarColor;
   final double? tabIconSize, tabIconSelectedSize, tabBarHeight, tabSize;
   final TextStyle? textStyle;
   final Function? onTabItemSelected;
   final String initialSelectedTab;
 
   final List<String?> labels;
-  final List<IconData>? icons;
+  final List<Widget>? icons;
   final bool useSafeArea;
   final MotionTabBarController? controller;
 
@@ -42,13 +45,16 @@ class MotionTabBar extends StatefulWidget {
     this.controller,
   })  : assert(labels.contains(initialSelectedTab)),
         assert(icons != null && icons.length == labels.length),
-        assert((badges != null && badges.length > 0) ? badges.length == labels.length : true);
+        assert((badges != null && badges.length > 0)
+            ? badges.length == labels.length
+            : true);
 
   @override
   _MotionTabBarState createState() => _MotionTabBarState();
 }
 
-class _MotionTabBarState extends State<MotionTabBar> with TickerProviderStateMixin {
+class _MotionTabBarState extends State<MotionTabBar>
+    with TickerProviderStateMixin {
   late AnimationController _animationController;
   late Tween<double> _positionTween;
   late Animation<double> _positionAnimation;
@@ -58,13 +64,13 @@ class _MotionTabBarState extends State<MotionTabBar> with TickerProviderStateMix
   late Animation<double> _fadeFabInAnimation;
 
   late List<String?> labels;
-  late Map<String?, IconData> icons;
+  late Map<String?, Widget> icons;
 
   get tabAmount => icons.keys.length;
   get index => labels.indexOf(selectedTab);
 
   double fabIconAlpha = 1;
-  IconData? activeIcon;
+  Widget? activeIcon;
   String? selectedTab;
 
   bool isRtl = false;
@@ -91,8 +97,8 @@ class _MotionTabBarState extends State<MotionTabBar> with TickerProviderStateMix
       isRtl = Directionality.of(context).index == 0;
     });
 
-    if(widget.controller != null) {
-      widget.controller!.onTabChange= (index) {
+    if (widget.controller != null) {
+      widget.controller!.onTabChange = (index) {
         setState(() {
           activeIcon = widget.icons![index];
           selectedTab = widget.labels[index];
@@ -111,8 +117,11 @@ class _MotionTabBarState extends State<MotionTabBar> with TickerProviderStateMix
     activeIcon = icons[selectedTab];
 
     // init badge text
-    int selectedIndex = labels.indexWhere((element) => element == widget.initialSelectedTab);
-    activeBadge = (widget.badges != null && widget.badges!.length > 0) ? widget.badges![selectedIndex] : null;
+    int selectedIndex =
+        labels.indexWhere((element) => element == widget.initialSelectedTab);
+    activeBadge = (widget.badges != null && widget.badges!.length > 0)
+        ? widget.badges![selectedIndex]
+        : null;
 
     _animationController = AnimationController(
       duration: Duration(milliseconds: ANIM_DURATION),
@@ -126,13 +135,14 @@ class _MotionTabBarState extends State<MotionTabBar> with TickerProviderStateMix
 
     _positionTween = Tween<double>(begin: getPosition(isRtl), end: 1);
 
-    _positionAnimation = _positionTween.animate(CurvedAnimation(parent: _animationController, curve: Curves.easeOut))
+    _positionAnimation = _positionTween.animate(
+        CurvedAnimation(parent: _animationController, curve: Curves.easeOut))
       ..addListener(() {
         setState(() {});
       });
 
-    _fadeFabOutAnimation = Tween<double>(begin: 1, end: 0)
-        .animate(CurvedAnimation(parent: _fadeOutController, curve: Curves.easeOut))
+    _fadeFabOutAnimation = Tween<double>(begin: 1, end: 0).animate(
+        CurvedAnimation(parent: _fadeOutController, curve: Curves.easeOut))
       ..addListener(() {
         setState(() {
           fabIconAlpha = _fadeFabOutAnimation.value;
@@ -142,14 +152,19 @@ class _MotionTabBarState extends State<MotionTabBar> with TickerProviderStateMix
         if (status == AnimationStatus.completed) {
           setState(() {
             activeIcon = icons[selectedTab];
-            int selectedIndex = labels.indexWhere((element) => element == selectedTab);
-            activeBadge = (widget.badges != null && widget.badges!.length > 0) ? widget.badges![selectedIndex] : null;
+            int selectedIndex =
+                labels.indexWhere((element) => element == selectedTab);
+            activeBadge = (widget.badges != null && widget.badges!.length > 0)
+                ? widget.badges![selectedIndex]
+                : null;
           });
         }
       });
 
-    _fadeFabInAnimation = Tween<double>(begin: 0, end: 1)
-        .animate(CurvedAnimation(parent: _animationController, curve: Interval(0.8, 1, curve: Curves.easeOut)))
+    _fadeFabInAnimation = Tween<double>(begin: 0, end: 1).animate(
+        CurvedAnimation(
+            parent: _animationController,
+            curve: Interval(0.8, 1, curve: Curves.easeOut)))
       ..addListener(() {
         setState(() {
           fabIconAlpha = _fadeFabInAnimation.value;
@@ -225,7 +240,8 @@ class _MotionTabBarState extends State<MotionTabBar> with TickerProviderStateMix
                         SizedBox(
                           height: widget.tabSize! + 15,
                           width: widget.tabSize! + 35,
-                          child: CustomPaint(painter: HalfPainter(color: widget.tabBarColor)),
+                          child: CustomPaint(
+                              painter: HalfPainter(color: widget.tabBarColor)),
                         ),
                         SizedBox(
                           height: widget.tabSize,
@@ -242,17 +258,17 @@ class _MotionTabBarState extends State<MotionTabBar> with TickerProviderStateMix
                                 child: Stack(
                                   alignment: Alignment.center,
                                   children: [
-                                    Icon(
-                                      activeIcon,
-                                      color: widget.tabIconSelectedColor,
-                                      size: widget.tabIconSelectedSize,
+                                    SizedBox(
+                                      width: widget.tabIconSelectedSize,
+                                      height: widget.tabIconSelectedSize,
+                                      child: activeIcon,
                                     ),
                                     activeBadge != null
                                         ? Positioned(
-                                      top: 0,
-                                      right: 0,
-                                      child: activeBadge!,
-                                    )
+                                            top: 0,
+                                            right: 0,
+                                            child: activeBadge!,
+                                          )
                                         : SizedBox(),
                                   ],
                                 ),
@@ -275,14 +291,16 @@ class _MotionTabBarState extends State<MotionTabBar> with TickerProviderStateMix
   List<Widget> generateTabItems() {
     bool isRtl = Directionality.of(context).index == 0;
     return labels.map((tabLabel) {
-      IconData? icon = icons[tabLabel];
+      Widget? icon = icons[tabLabel];
 
       int selectedIndex = labels.indexWhere((element) => element == tabLabel);
-      Widget? badge = (widget.badges != null && widget.badges!.length > 0) ? widget.badges![selectedIndex] : null;
+      Widget? badge = (widget.badges != null && widget.badges!.length > 0)
+          ? widget.badges![selectedIndex]
+          : null;
 
       return MotionTabItem(
         selected: selectedTab == tabLabel,
-        iconData: icon,
+        iconWidget: icon,
         title: tabLabel,
         textStyle: widget.textStyle ?? TextStyle(color: Colors.black),
         tabIconColor: widget.tabIconColor ?? Colors.black,
