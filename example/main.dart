@@ -33,6 +33,10 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   // TabController? _tabController;
   MotionTabBarController? _motionTabBarController;
+  
+  // Add state to demonstrate dynamic icon updates
+  bool _useColoredIcons = false;
+  bool _useCustomWidgets = false;
 
   @override
   void initState() {
@@ -58,18 +62,99 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     _motionTabBarController!.dispose();
   }
 
+  // Method to get icons dynamically
+  List<Widget> get _icons {
+    if (_useCustomWidgets) {
+      return [
+        Container(
+          width: 24,
+          height: 24,
+          decoration: BoxDecoration(
+            color: Colors.blue,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: const Icon(Icons.dashboard, color: Colors.white, size: 16),
+        ),
+        Container(
+          width: 24,
+          height: 24,
+          decoration: BoxDecoration(
+            color: Colors.green,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: const Icon(Icons.home, color: Colors.white, size: 16),
+        ),
+        Container(
+          width: 24,
+          height: 24,
+          decoration: BoxDecoration(
+            color: Colors.orange,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: const Icon(Icons.people_alt, color: Colors.white, size: 16),
+        ),
+        Container(
+          width: 24,
+          height: 24,
+          decoration: BoxDecoration(
+            color: Colors.purple,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: const Icon(Icons.settings, color: Colors.white, size: 16),
+        ),
+      ];
+    } else if (_useColoredIcons) {
+      return const [
+        Icon(Icons.dashboard, color: Colors.blue),
+        Icon(Icons.home, color: Colors.green),
+        Icon(Icons.people_alt, color: Colors.orange),
+        Icon(Icons.settings, color: Colors.purple)
+      ];
+    } else {
+      return const [
+        Icon(Icons.dashboard),
+        Icon(Icons.home),
+        Icon(Icons.people_alt),
+        Icon(Icons.settings)
+      ];
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title!),
+        actions: [
+          IconButton(
+            onPressed: () {
+              setState(() {
+                _useColoredIcons = !_useColoredIcons;
+                _useCustomWidgets = false;
+              });
+            },
+            icon: Icon(_useColoredIcons ? Icons.palette : Icons.palette_outlined),
+            tooltip: 'Toggle Colors',
+          ),
+          IconButton(
+            onPressed: () {
+              setState(() {
+                _useCustomWidgets = !_useCustomWidgets;
+                _useColoredIcons = false;
+              });
+            },
+            icon: Icon(_useCustomWidgets ? Icons.widgets : Icons.widgets_outlined),
+            tooltip: 'Toggle Custom Widgets',
+          ),
+        ],
       ),
       bottomNavigationBar: MotionTabBar(
-        controller: _motionTabBarController, // Add this controller if you need to change your tab programmatically
+        controller:
+            _motionTabBarController, // Add this controller if you need to change your tab programmatically
         initialSelectedTab: "Home",
         useSafeArea: true, // default: true, apply safe area wrapper
         labels: const ["Dashboard", "Home", "Profile", "Settings"],
-        icons: const [Icons.dashboard, Icons.home, Icons.people_alt, Icons.settings],
+        icons: _icons,
 
         // optional badges, length must be same with labels
         badges: [
@@ -125,13 +210,18 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         },
       ),
       body: TabBarView(
-        physics: const NeverScrollableScrollPhysics(), // swipe navigation handling is not supported
+        physics:
+            const NeverScrollableScrollPhysics(), // swipe navigation handling is not supported
         controller: _motionTabBarController,
         children: <Widget>[
-          MainPageContentComponent(title: "Dashboard Page", controller: _motionTabBarController!),
-          MainPageContentComponent(title: "Home Page", controller: _motionTabBarController!),
-          MainPageContentComponent(title: "Profile Page", controller: _motionTabBarController!),
-          MainPageContentComponent(title: "Settings Page", controller: _motionTabBarController!),
+          MainPageContentComponent(
+              title: "Dashboard Page", controller: _motionTabBarController!),
+          MainPageContentComponent(
+              title: "Home Page", controller: _motionTabBarController!),
+          MainPageContentComponent(
+              title: "Profile Page", controller: _motionTabBarController!),
+          MainPageContentComponent(
+              title: "Settings Page", controller: _motionTabBarController!),
         ],
       ),
     );
@@ -154,7 +244,9 @@ class MainPageContentComponent extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(title, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          Text(title,
+              style:
+                  const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
           const SizedBox(height: 50),
           const Text('Go to "X" page programmatically'),
           const SizedBox(height: 10),

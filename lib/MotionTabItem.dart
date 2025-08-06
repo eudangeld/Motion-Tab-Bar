@@ -11,7 +11,7 @@ const int ANIM_DURATION = 300;
 class MotionTabItem extends StatefulWidget {
   final String? title;
   final bool selected;
-  final IconData? iconData;
+  final Widget? iconWidget;
   final TextStyle textStyle;
   final Function callbackFunction;
   final Color tabIconColor;
@@ -21,7 +21,7 @@ class MotionTabItem extends StatefulWidget {
   MotionTabItem({
     required this.title,
     required this.selected,
-    required this.iconData,
+    required this.iconWidget,
     required this.textStyle,
     required this.tabIconColor,
     required this.callbackFunction,
@@ -105,10 +105,10 @@ class _MotionTabItemState extends State<MotionTabItem> {
                         splashColor: Colors.transparent,
                         padding: EdgeInsets.all(0),
                         alignment: Alignment(0, 0),
-                        icon: Icon(
-                          widget.iconData,
-                          color: widget.tabIconColor,
-                          size: widget.tabIconSize,
+                        icon: SizedBox(
+                          width: widget.tabIconSize,
+                          height: widget.tabIconSize,
+                          child: widget.iconWidget,
                         ),
                         onPressed: () => widget.callbackFunction(),
                       ),

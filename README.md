@@ -99,9 +99,16 @@ dependencies:
         color: Colors.blue, // optional, default to Colors.red
         size: 5, // optional, default to 5,
         show: true, // true / false
-      ),
-    ],
-    tabSize: 50,
+              ),
+      ],
+      
+      // Icon System
+      // You can use any Widget as an icon, not just Icon widgets
+      // Examples:
+      // - Icon(Icons.dashboard, color: Colors.blue)
+      // - Container(decoration: BoxDecoration(...), child: Icon(...))
+      // - Custom widgets
+      tabSize: 50,
     tabBarHeight: 55,
     textStyle: const TextStyle(
       fontSize: 12,
