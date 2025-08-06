@@ -65,12 +65,7 @@ dependencies:
     controller: _motionTabBarController, // ADD THIS if you need to change your tab programmatically
     initialSelectedTab: "Home",
     labels: const ["Dashboard", "Home", "Profile", "Settings"],
-    icons: const [
-      Icon(Icons.dashboard),
-      Icon(Icons.home),
-      Icon(Icons.people_alt),
-      Icon(Icons.settings)
-    ],
+    icons: const [Icons.dashboard, Icons.home, Icons.people_alt, Icons.settings],
 
     // optional badges, length must be same with labels
     badges: [

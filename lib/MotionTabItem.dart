@@ -11,7 +11,7 @@ const int ANIM_DURATION = 300;
 class MotionTabItem extends StatefulWidget {
   final String? title;
   final bool selected;
-  final Widget? iconWidget;
+  final IconData? iconData;
   final TextStyle textStyle;
   final Function callbackFunction;
   final Color tabIconColor;
@@ -21,7 +21,7 @@ class MotionTabItem extends StatefulWidget {
   MotionTabItem({
     required this.title,
     required this.selected,
-    required this.iconWidget,
+    required this.iconData,
     required this.textStyle,
     required this.tabIconColor,
     required this.callbackFunction,
@@ -75,12 +75,12 @@ class _MotionTabItemState extends State<MotionTabItem> {
                 padding: const EdgeInsets.all(8.0),
                 child: widget.selected
                     ? Text(
-                        widget.title!,
-                        style: widget.textStyle,
-                        softWrap: false,
-                        maxLines: 1,
-                        textAlign: TextAlign.center,
-                      )
+                  widget.title!,
+                  style: widget.textStyle,
+                  softWrap: false,
+                  maxLines: 1,
+                  textAlign: TextAlign.center,
+                )
                     : Text(''),
               ),
             ),
@@ -105,19 +105,19 @@ class _MotionTabItemState extends State<MotionTabItem> {
                         splashColor: Colors.transparent,
                         padding: EdgeInsets.all(0),
                         alignment: Alignment(0, 0),
-                        icon: SizedBox(
-                          width: widget.tabIconSize,
-                          height: widget.tabIconSize,
-                          child: widget.iconWidget,
+                        icon: Icon(
+                          widget.iconData,
+                          color: widget.tabIconColor,
+                          size: widget.tabIconSize,
                         ),
                         onPressed: () => widget.callbackFunction(),
                       ),
                       widget.badge != null
                           ? Positioned(
-                              top: 0,
-                              right: 0,
-                              child: widget.badge!,
-                            )
+                        top: 0,
+                        right: 0,
+                        child: widget.badge!,
+                      )
                           : SizedBox(),
                     ],
                   ),

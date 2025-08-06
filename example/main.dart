@@ -69,12 +69,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         initialSelectedTab: "Home",
         useSafeArea: true, // default: true, apply safe area wrapper
         labels: const ["Dashboard", "Home", "Profile", "Settings"],
-        icons: const [
-          Icon(Icons.dashboard),
-          Icon(Icons.home),
-          Icon(Icons.people_alt),
-          Icon(Icons.settings)
-        ],
+        icons: const [Icons.dashboard, Icons.home, Icons.people_alt, Icons.settings],
 
         // optional badges, length must be same with labels
         badges: [
