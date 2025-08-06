@@ -93,7 +93,8 @@ class _MotionTabBarState extends State<MotionTabBar>
     return position;
   }
 
-  // Generate a hash for the current icons to detect changes
+  // Generate a hash for the current
+  // icons to detect changes
   String _generateIconHash() {
     if (widget.icons == null) return '';
     return widget.icons!.map((icon) => icon.hashCode.toString()).join('_');
