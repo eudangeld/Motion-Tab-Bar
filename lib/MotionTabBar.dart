@@ -66,6 +66,10 @@ class _MotionTabBarState extends State<MotionTabBar>
   late List<String?> labels;
   late Map<String?, Widget> icons;
 
+  // Add a key to force rebuild when icons change
+  late String _iconHash;
+  late List<GlobalKey> _tabKeys;
+
   get tabAmount => icons.keys.length;
   get index => labels.indexOf(selectedTab);
 
@@ -87,6 +91,20 @@ class _MotionTabBarState extends State<MotionTabBar>
     }
 
     return position;
+  }
+
+  // Generate a hash for the current icons to detect changes
+  String _generateIconHash() {
+    if (widget.icons == null) return '';
+    return widget.icons!.map((icon) => icon.hashCode.toString()).join('_');
+  }
+
+  // Initialize tab keys
+  void _initializeTabKeys() {
+    _tabKeys = List.generate(
+      labels.length,
+      (index) => GlobalKey(),
+    );
   }
 
   @override
@@ -112,6 +130,10 @@ class _MotionTabBarState extends State<MotionTabBar>
       key: (label) => label,
       value: (label) => widget.icons![labels.indexOf(label)],
     );
+
+    // Initialize icon hash and tab keys
+    _iconHash = _generateIconHash();
+    _initializeTabKeys();
 
     selectedTab = widget.initialSelectedTab;
     activeIcon = icons[selectedTab];
@@ -170,6 +192,50 @@ class _MotionTabBarState extends State<MotionTabBar>
           fabIconAlpha = _fadeFabInAnimation.value;
         });
       });
+  }
+
+  @override
+  void didUpdateWidget(MotionTabBar oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    // Check if icons have changed
+    String newIconHash = _generateIconHash();
+    if (newIconHash != _iconHash) {
+      _iconHash = newIconHash;
+
+      // Update icons map
+      icons = Map.fromIterable(
+        labels,
+        key: (label) => label,
+        value: (label) => widget.icons![labels.indexOf(label)],
+      );
+
+      // Update active icon
+      if (selectedTab != null) {
+        activeIcon = icons[selectedTab];
+      }
+
+      // Force rebuild by updating keys
+      _initializeTabKeys();
+
+      // Force setState to rebuild the widget tree
+      setState(() {});
+    }
+
+    // Update labels if they changed
+    if (widget.labels != oldWidget.labels) {
+      labels = widget.labels;
+      _initializeTabKeys();
+    }
+
+    // Update badges if they changed
+    if (widget.badges != oldWidget.badges && selectedTab != null) {
+      int selectedIndex =
+          labels.indexWhere((element) => element == selectedTab);
+      activeBadge = (widget.badges != null && widget.badges!.length > 0)
+          ? widget.badges![selectedIndex]
+          : null;
+    }
   }
 
   @override
@@ -290,7 +356,9 @@ class _MotionTabBarState extends State<MotionTabBar>
 
   List<Widget> generateTabItems() {
     bool isRtl = Directionality.of(context).index == 0;
-    return labels.map((tabLabel) {
+    return labels.asMap().entries.map((entry) {
+      int index = entry.key;
+      String? tabLabel = entry.value;
       Widget? icon = icons[tabLabel];
 
       int selectedIndex = labels.indexWhere((element) => element == tabLabel);
@@ -299,6 +367,7 @@ class _MotionTabBarState extends State<MotionTabBar>
           : null;
 
       return MotionTabItem(
+        key: _tabKeys[index], // Use key to force rebuild
         selected: selectedTab == tabLabel,
         iconWidget: icon,
         title: tabLabel,

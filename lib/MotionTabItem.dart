@@ -19,6 +19,7 @@ class MotionTabItem extends StatefulWidget {
   final Widget? badge;
 
   MotionTabItem({
+    Key? key,
     required this.title,
     required this.selected,
     required this.iconWidget,
@@ -27,7 +28,7 @@ class MotionTabItem extends StatefulWidget {
     required this.callbackFunction,
     this.tabIconSize = 24,
     this.badge,
-  });
+  }) : super(key: key);
 
   @override
   _MotionTabItemState createState() => _MotionTabItemState();
